@@ -23,11 +23,12 @@ class Game:
         self.state = "menu"
         self.menu = Menu(self)
         self.load_words()
-        self.board = WordleBoard(self.words, 0, 0)
-        self.keyboard = Keyboard(self.get_keyboard_layout(), 0, 0)
+        # self.board = WordleBoard(self.words, 0, 0)
+        # self.keyboard = Keyboard(self.get_keyboard_layout(), 0, 0)
         self.end_message = ""
         self.end_buttons = []
         self.background = Background(self.screen, self.background_image)
+        self.escape_press_count = 0
 
     def load_assets(self):
         self.background_image = pygame.image.load(os.path.join(ASSETS_PATH, "background.png")).convert()
@@ -58,6 +59,7 @@ class Game:
         self.keyboard = Keyboard(self.get_keyboard_layout(), (SCREEN_WIDTH - self.get_keyboard_width()) // 2, 700)
         self.end_message = ""
         self.end_buttons = []
+        self.escape_press_count = 0
 
     def run(self):
         while self.running:
@@ -69,6 +71,11 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.escape_press_count += 1
+                if self.escape_press_count >= 3:
+                    self.return_to_menu()
+                return
             elif self.state == "menu":
                 self.menu.handle_event(event)
             elif self.state == "game":
@@ -91,6 +98,9 @@ class Game:
                             self.board.delete_letter()
                         else:
                             self.board.enter_letter(letter)
+                #
+                if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                    self.escape_press_count = 0
             elif self.state == "end":
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()

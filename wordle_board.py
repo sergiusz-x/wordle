@@ -1,6 +1,6 @@
-import pygame
 from settings import *
 import random
+from tile import Tile
 
 class WordleBoard:
     def __init__(self, words, x, y):
@@ -9,7 +9,7 @@ class WordleBoard:
         self.tiles = [[Tile(x + (TILE_SIZE + TILE_MARGIN) * col, y + (TILE_SIZE + TILE_MARGIN) * row) for col in range(5)] for row in range(6)]
         self.current_row = 0
         self.current_col = 0
-        print(f"Targer word: {self.target_word}")
+        print(f"Target word: {self.target_word}")
 
     def choose_word(self):
         return random.choice(self.words).upper()
@@ -55,17 +55,3 @@ class WordleBoard:
         for row in self.tiles:
             for tile in row:
                 tile.draw(screen, font)
-
-class Tile:
-    def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
-        self.letter = ""
-        self.color = WHITE
-
-    def draw(self, screen, font):
-        pygame.draw.rect(screen, self.color, self.rect)
-        pygame.draw.rect(screen, BLACK, self.rect, 1)
-        if self.letter:
-            text_surface = font.render(self.letter, True, BLACK)
-            text_rect = text_surface.get_rect(center=self.rect.center)
-            screen.blit(text_surface, text_rect)
