@@ -9,7 +9,6 @@ class Background:
         self.y = 0
         self.direction_x = 1
         self.direction_y = 1
-        self.speed = 1
     
     def update(self):
         if self.x + SCREEN_WIDTH >= self.rect.width or self.x < 0:
@@ -17,8 +16,8 @@ class Background:
         if self.y + SCREEN_HEIGHT >= self.rect.height or self.y < 0:
             self.direction_y *= -1
 
-        self.x += self.direction_x * self.speed
-        self.y += self.direction_y * self.speed
+        self.x += self.direction_x * BACKGROUND_ANIM_SPEED
+        self.y += self.direction_y * BACKGROUND_ANIM_SPEED
     
     def draw(self):
         self.update()

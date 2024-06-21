@@ -3,8 +3,9 @@ import random
 from tile import Tile
 
 class WordleBoard:
-    def __init__(self, words, x, y):
+    def __init__(self, words, keyboard, x, y):
         self.words = words
+        self.keyboard = keyboard
         self.target_word = self.choose_word()
         self.tiles = [[Tile(x + (TILE_SIZE + TILE_MARGIN) * col, y + (TILE_SIZE + TILE_MARGIN) * row) for col in range(5)] for row in range(6)]
         self.current_row = 0
@@ -37,7 +38,7 @@ class WordleBoard:
                 if letter == self.target_word[col]:
                     self.tiles[self.current_row][col].color = GREEN
                 elif letter in self.target_word:
-                    self.tiles[self.current_row][col].color = YELLOW
+                    self.tiles[self.current_row][col].color = YELLOW  
                 else:
                     self.tiles[self.current_row][col].color = RED
             self.current_row += 1

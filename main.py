@@ -15,7 +15,7 @@ class Game:
         pygame.display.set_caption("Wordle")
         self.clock = pygame.time.Clock()
         self.running = True
-        self.font = self.load_font()
+        self.font = pygame.font.Font(os.path.join(ASSETS_PATH, "font.ttf"), FONT_SIZE)
         self.load_assets()
         pygame.display.set_icon(self.menu_logo)
         self.language = "pl"
@@ -23,8 +23,8 @@ class Game:
         self.state = "menu"
         self.menu = Menu(self)
         self.load_words()
-        # self.board = WordleBoard(self.words, 0, 0)
-        # self.keyboard = Keyboard(self.get_keyboard_layout(), 0, 0)
+        # self.keyboard = Keyboard()
+        # self.board = WordleBoard()
         self.end_message = ""
         self.end_buttons = []
         self.background = Background(self.screen, self.background_image)
@@ -38,13 +38,10 @@ class Game:
         pygame.mixer.music.play(-1)
         self.menu_logo = pygame.image.load(os.path.join(ASSETS_PATH, "menu_logo.png")).convert_alpha()
         self.game_logo = pygame.image.load(os.path.join(ASSETS_PATH, "game_logo.png")).convert_alpha()
-    
-    def load_font(self):
-        return pygame.font.Font(os.path.join(ASSETS_PATH, "font.ttf"), FONT_SIZE)
 
     def load_words(self):
         path = WORDLIST_EN if self.language == "en" else WORDLIST_PL
-        with open(path, newline="", encoding="utf-8") as csvfile:
+        with open(path, encoding="utf-8") as csvfile:
             self.words = [row[0] for row in csv.reader(csvfile) if len(row[0]) == 5]
 
     def get_keyboard_layout(self):
@@ -55,8 +52,8 @@ class Game:
 
     def new_game(self):
         self.load_words()
-        self.board = WordleBoard(self.words, (SCREEN_WIDTH - (5 * TILE_SIZE + 4 * TILE_MARGIN)) // 2, 150)
         self.keyboard = Keyboard(self.get_keyboard_layout(), (SCREEN_WIDTH - self.get_keyboard_width()) // 2, 700)
+        self.board = WordleBoard(self.words, self.keyboard, (SCREEN_WIDTH - (5 * TILE_SIZE + 4 * TILE_MARGIN)) // 2, 150)
         self.end_message = ""
         self.end_buttons = []
         self.escape_press_count = 0
@@ -109,7 +106,7 @@ class Game:
                             button.callback()
 
     def handle_text_input(self, char):
-        if len(char) == 1 and char.isalpha():
+        if len(char) == 1 and char != " ":
             self.board.enter_letter(char)
 
     def check_guess_validity(self):
@@ -118,7 +115,7 @@ class Game:
             if self.is_valid_word(guess):
                 result = self.board.submit_guess()
                 if result == "win":
-                    self.end_message = "Gratulacje! Poprawnie odgadnięte słowo!"
+                    self.end_message = f"Gratulacje! Poprawnie odgadnięte słowo {self.board.target_word}!"
                     self.add_end_buttons()
                     self.state = "end"
                     if self.music_on:
@@ -131,7 +128,8 @@ class Game:
                         self.wrong_sound.play()
                 else:
                     self.update_keyboard_colors()
-                    self.wrong_sound.play()
+                    if self.music_on:
+                        self.wrong_sound.play()
             else:
                 self.show_invalid_word_message()
         pygame.event.set_allowed(pygame.KEYDOWN)
@@ -194,9 +192,8 @@ class Game:
         self.screen.blit(text_surface, text_rect)
 
     def draw_logo(self, logo, position):
-        if logo:
-            rect = logo.get_rect(center=position)
-            self.screen.blit(logo, rect)
+        rect = logo.get_rect(center=position)
+        self.screen.blit(logo, rect)
 
     def return_to_menu(self):
         self.state = "menu"

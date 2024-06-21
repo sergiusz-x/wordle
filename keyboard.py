@@ -30,10 +30,19 @@ class Keyboard:
             if key.is_clicked(pos):
                 return key.letter
         return None
+    
+    def get_green_keys(self):
+        green_letters = []
+        for key in self.keys:
+            if key.color == GREEN:
+                green_letters.append(key.letter)
+        return green_letters
 
     def update_colors(self, letter, color):
         for key in self.keys:
             if key.letter == letter:
+                if letter in self.get_green_keys():
+                    color = GREEN
                 key.color = color
 
 class Key:
@@ -51,6 +60,7 @@ class Key:
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
+
 
 class BackspaceKey(Key):
     def __init__(self, y_offset, num_rows):

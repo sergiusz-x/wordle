@@ -1,23 +1,6 @@
 import pygame
 from settings import *
 
-class Button:
-    def __init__(self, text, x, y, width, height, callback):
-        self.text = text
-        self.rect = pygame.Rect(x, y, width, height)
-        self.callback = callback
-        self.color = LIGHT_GRAY
-
-    def draw(self, screen, font):
-        pygame.draw.rect(screen, BLACK, self.rect, border_radius=BUTTON_RADIUS)
-        pygame.draw.rect(screen, self.color, self.rect.inflate(-4, -4), border_radius=BUTTON_RADIUS-2)
-        text_surface = font.render(self.text, True, BLACK)
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        screen.blit(text_surface, text_rect)
-
-    def is_clicked(self, pos):
-        return self.rect.collidepoint(pos)
-
 class Menu:
     def __init__(self, game):
         self.game = game
@@ -67,3 +50,21 @@ class Menu:
 
     def exit_game(self):
         self.game.running = False
+
+
+class Button:
+    def __init__(self, text, x, y, width, height, callback):
+        self.text = text
+        self.rect = pygame.Rect(x, y, width, height)
+        self.callback = callback
+        self.color = LIGHT_GRAY
+
+    def draw(self, screen, font):
+        pygame.draw.rect(screen, BLACK, self.rect, border_radius=BUTTON_RADIUS)
+        pygame.draw.rect(screen, self.color, self.rect.inflate(-4, -4), border_radius=BUTTON_RADIUS-2)
+        text_surface = font.render(self.text, True, BLACK)
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        screen.blit(text_surface, text_rect)
+
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)
